@@ -38,7 +38,17 @@ class PurchaseContract : Contract {
             }
 
             is Commands.PayInstallment -> requireThat {
-
+                "Only one input state should be consumed when paying an installment" using (tx.inputs.size == 1)
+                "Only one output should be produced when paying an installment" using (tx.outputs.size == 1)
+                val inputState = tx.inputStates.single() as PurchaseState
+                val outputState = tx.outputStates.single() as PurchaseState
+                "Only the amount paid should change when paying an installment" using (
+                        inputState == outputState.copy(amountPaid = inputState.amountPaid))
+                "Amount paid should be less than the price when paying an installment" using (
+                        inputState.price > outputState.amountPaid)
+                "Paid amound should increase when paying an installment" using (outputState.amountPaid > inputState.amountPaid)
+                "Both buyer and seller should sign the transaction when paying an installment" using (
+                        command.signers.toSet() == outputState.participants.map { it.owningKey }.toSet())
             }
 
             is Commands.Complete -> requireThat {
@@ -61,5 +71,5 @@ data class PurchaseState(
         val amountPaid: Amount<Currency>,
         val itemId: Int
 ) : ContractState {
-    override val participants: List<AbstractParty> get() = listOf()
+    override val participants: List<AbstractParty> get() = listOf(buyer, seller)
 }
