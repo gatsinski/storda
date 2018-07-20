@@ -1,5 +1,7 @@
-package com.storda
+package com.storda.contracts
 
+import com.storda.PurchaseContract
+import com.storda.PurchaseState
 import net.corda.core.identity.CordaX500Name
 import net.corda.finance.POUNDS
 import net.corda.testing.contracts.DummyState
@@ -9,7 +11,7 @@ import net.corda.testing.node.ledger
 import org.junit.Test
 
 class PurchasePayInstallmentTests {
-    private val ledgerServices = MockServices()
+    val ledgerServices = MockServices(listOf("com.storda"))
     private val buyer = TestIdentity(CordaX500Name("Buyer", "Europe", "BG"))
     private val seller = TestIdentity(CordaX500Name("Seller", "Europe", "BG"))
     private val participants = listOf(buyer.publicKey, seller.publicKey)
