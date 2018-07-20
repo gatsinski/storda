@@ -55,7 +55,13 @@ class PurchaseContract : Contract {
             }
 
             is Commands.Complete -> requireThat {
-
+                "Only one input state should be consumed when completing a purchase" using (tx.inputs.size == 1)
+                "No output states should be produced when completing a purchase" using (tx.outputs.isEmpty())
+                val inputState = tx.inputStates.single() as PurchaseState
+                "Paid amount should be equal to price before completing a purchase" using (
+                        inputState.price == inputState.amountPaid)
+                "Both buyer and seller should sign the transaction when completing a purchase" using(
+                        command.signers.toSet() == inputState.participants.map { it.owningKey }.toSet())
             }
 
             else -> throw IllegalArgumentException("Invalid command")
