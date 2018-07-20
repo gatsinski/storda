@@ -87,4 +87,18 @@ class PurchaseInitiateTests {
             }
         }
     }
+
+
+    @Test
+    fun `Both buyer and seller should sign the transaction when initiating a purchase`() {
+        ledgerServices.ledger {
+            transaction {
+                command(participants, PurchaseContract.Commands.Initiate())
+                val wrongSeller = TestIdentity(CordaX500Name("Wrong Seller", "Europe", "BG"))
+                val invalidPurchase = purchase.copy(seller = wrongSeller.party)
+                output(PurchaseContract.PROGRAM_ID, invalidPurchase)
+                failsWith("Both buyer and seller should sign the transaction when initiating a purchase")
+            }
+        }
+    }
 }

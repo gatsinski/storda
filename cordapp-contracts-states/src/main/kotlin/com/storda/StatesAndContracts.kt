@@ -1,5 +1,6 @@
 package com.storda
 
+import kotlinx.html.attributesMapOf
 import net.corda.core.contracts.*
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.Party
@@ -35,6 +36,8 @@ class PurchaseContract : Contract {
                 "Price should be greater than zero when initiating a purchase" using (outputState.price.quantity > 0)
                 "The paid amount should be zero when initiating a purchase" using (outputState.amountPaid.quantity == 0L)
                 "Buyer and seller should be different identities when initiating a purchase" using (outputState.buyer != outputState.seller)
+                "Both buyer and seller should sign the transaction when initiating a purchase" using (
+                        command.signers.toSet() == outputState.participants.map { it.owningKey }.toSet())
             }
 
             is Commands.PayInstallment -> requireThat {
