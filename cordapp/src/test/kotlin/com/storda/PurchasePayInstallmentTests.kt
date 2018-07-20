@@ -71,23 +71,20 @@ class PurchasePayInstallmentTests {
     }
 
     @Test
-    fun `Amount paid should be less than the price when paying an installment`() {
+    fun `Amount paid should not be greater than the price when paying an installment`() {
         ledgerServices.ledger {
             transaction {
                 command(participants, PurchaseContract.Commands.PayInstallment())
                 input(PurchaseContract.PROGRAM_ID, oldPurchase)
                 output(PurchaseContract.PROGRAM_ID, newPurchase.copy(amountPaid = oldPurchase.price.plus(10.POUNDS)))
                 failsWith(
-                        "Amount paid should be less than the price when paying an installment")
+                        "Amount paid should not be greater than the price when paying an installment")
             }
-        }
-        ledgerServices.ledger {
             transaction {
                 command(participants, PurchaseContract.Commands.PayInstallment())
                 input(PurchaseContract.PROGRAM_ID, oldPurchase)
                 output(PurchaseContract.PROGRAM_ID, newPurchase.copy(amountPaid = oldPurchase.price))
-                failsWith(
-                        "Amount paid should be less than the price when paying an installment")
+                verifies()
             }
         }
     }

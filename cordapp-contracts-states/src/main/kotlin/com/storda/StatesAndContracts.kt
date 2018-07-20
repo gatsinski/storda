@@ -47,8 +47,8 @@ class PurchaseContract : Contract {
                 val outputState = tx.outputStates.single() as PurchaseState
                 "Only the amount paid should change when paying an installment" using (
                         inputState == outputState.copy(amountPaid = inputState.amountPaid))
-                "Amount paid should be less than the price when paying an installment" using (
-                        inputState.price > outputState.amountPaid)
+                "Amount paid should not be greater than the price when paying an installment" using (
+                        inputState.price >= outputState.amountPaid)
                 "Paid amound should increase when paying an installment" using (outputState.amountPaid > inputState.amountPaid)
                 "Both buyer and seller should sign the transaction when paying an installment" using (
                         command.signers.toSet() == outputState.participants.map { it.owningKey }.toSet())
