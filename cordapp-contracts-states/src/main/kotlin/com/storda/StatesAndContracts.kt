@@ -34,8 +34,10 @@ class PurchaseContract : Contract {
                 "Only one output should be produced when initiating a purchase" using (tx.outputs.size == 1)
                 val outputState = tx.outputStates.single() as PurchaseState
                 "Price should be greater than zero when initiating a purchase" using (outputState.price.quantity > 0)
-                "The paid amount should be zero when initiating a purchase" using (outputState.amountPaid.quantity == 0L)
-                "Buyer and seller should be different identities when initiating a purchase" using (outputState.buyer != outputState.seller)
+                "The paid amount should be zero when initiating a purchase" using (
+                        outputState.amountPaid.quantity == 0L)
+                "Buyer and seller should be different identities when initiating a purchase" using (
+                        outputState.buyer != outputState.seller)
                 "Both buyer and seller should sign the transaction when initiating a purchase" using (
                         command.signers.toSet() == outputState.participants.map { it.owningKey }.toSet())
             }
@@ -49,9 +51,12 @@ class PurchaseContract : Contract {
                         inputState == outputState.copy(amountPaid = inputState.amountPaid))
                 "Amount paid should not be greater than the price when paying an installment" using (
                         inputState.price >= outputState.amountPaid)
-                "Paid amound should increase when paying an installment" using (outputState.amountPaid > inputState.amountPaid)
+                "Paid amound should increase when paying an installment" using (
+                        outputState.amountPaid > inputState.amountPaid)
+                val inputStateSigners = inputState.participants.map { it.owningKey }.toSet()
+                val outputStateSigners = outputState.participants.map { it.owningKey }.toSet()
                 "Both buyer and seller should sign the transaction when paying an installment" using (
-                        command.signers.toSet() == outputState.participants.map { it.owningKey }.toSet())
+                        command.signers.toSet() == inputStateSigners union outputStateSigners)
             }
 
             is Commands.Complete -> requireThat {
