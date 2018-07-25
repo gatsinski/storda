@@ -2,7 +2,6 @@ package com.storda.flows
 
 import com.storda.PurchaseState
 import net.corda.core.contracts.Amount
-import net.corda.core.contracts.requireThat
 import net.corda.core.identity.Party
 import net.corda.core.node.services.queryBy
 import net.corda.core.transactions.SignedTransaction
@@ -74,12 +73,10 @@ class PurchaseInitiateTests {
 
                 val purchase = purchases.single().state.data
 
-                requireThat {
-                    "Price should be recorded" using (purchase.price == 10.POUNDS)
-                    "Item id should recorded" using (purchase.itemId == 1)
-                    "Buyer should be recorded" using (purchase.buyer == buyer)
-                    "Seller should be recorded" using (purchase.seller == seller)
-                }
+                assertEquals(10.POUNDS, purchase.price, "Price should be recorded")
+                assertEquals(1, purchase.itemId, "Item id should be recorded")
+                assertEquals(buyer, purchase.buyer, "Buyer should be recorded")
+                assertEquals(seller, purchase.seller, "Seller should be recorded")
             }
         }
     }
@@ -92,9 +89,7 @@ class PurchaseInitiateTests {
         val transactionSignatures = signedTransaction.sigs.map { it.by }.toSet()
         val expectedSignatures = listOf(buyer, seller).map { it.owningKey }.toSet()
 
-        requireThat {
-            "Both parties should sign" using (transactionSignatures == expectedSignatures)
-        }
+        assertEquals(expectedSignatures, transactionSignatures, "Both parties should sign")
     }
 
     private fun initiatePurchase(

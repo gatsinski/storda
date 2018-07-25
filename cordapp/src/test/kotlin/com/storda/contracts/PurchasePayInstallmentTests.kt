@@ -40,7 +40,8 @@ class PurchasePayInstallmentTests {
                 input(PurchaseContract.PROGRAM_ID, DummyState())
                 output(PurchaseContract.PROGRAM_ID, DummyState())
                 failsWith(
-                        "Only one input state should be consumed when paying an installment")
+                    "Only one input state should be consumed when paying an installment"
+                )
             }
         }
     }
@@ -54,7 +55,8 @@ class PurchasePayInstallmentTests {
                 output(PurchaseContract.PROGRAM_ID, DummyState())
                 output(PurchaseContract.PROGRAM_ID, DummyState())
                 failsWith(
-                        "Only one output should be produced when paying an installment")
+                    "Only one output should be produced when paying an installment"
+                )
             }
         }
     }
@@ -67,7 +69,8 @@ class PurchasePayInstallmentTests {
                 input(PurchaseContract.PROGRAM_ID, oldPurchase)
                 output(PurchaseContract.PROGRAM_ID, newPurchase.copy(price = 20.POUNDS))
                 failsWith(
-                        "Only the amount paid should change when paying an installment")
+                    "Only the amount paid should change when paying an installment"
+                )
             }
         }
     }
@@ -80,7 +83,8 @@ class PurchasePayInstallmentTests {
                 input(PurchaseContract.PROGRAM_ID, oldPurchase)
                 output(PurchaseContract.PROGRAM_ID, newPurchase.copy(amountPaid = oldPurchase.price.plus(10.POUNDS)))
                 failsWith(
-                        "Amount paid should not be greater than the price when paying an installment")
+                    "Amount paid should not be greater than the price when paying an installment"
+                )
             }
             transaction {
                 command(participants, PurchaseContract.Commands.PayInstallment())
@@ -112,7 +116,8 @@ class PurchasePayInstallmentTests {
                 input(PurchaseContract.PROGRAM_ID, oldPurchase)
                 output(PurchaseContract.PROGRAM_ID, newPurchase)
                 failsWith(
-                        "Both buyer and seller should sign the transaction when paying an installment")
+                    "Both buyer and seller should sign the transaction when paying an installment"
+                )
             }
         }
     }
