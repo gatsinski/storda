@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - project-dependencies-{{ checksum "build.gradle" }}
+          - project-dependencies-
+
+      - run: gradle dependencies
+
+      - run:
+          name: Install project dependencies
+          command: gradle dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: project-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Run project tests
+          command: gradle test
