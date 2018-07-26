@@ -1,8 +1,6 @@
 package com.storda
 
-import kotlinx.html.attributesMapOf
 import net.corda.core.contracts.*
-import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.Party
 import net.corda.core.transactions.LedgerTransaction
 import java.util.*
@@ -65,7 +63,7 @@ class PurchaseContract : Contract {
                 val inputState = tx.inputStates.single() as PurchaseState
                 "Paid amount should be equal to price before completing a purchase" using (
                         inputState.price == inputState.amountPaid)
-                "Both buyer and seller should sign the transaction when completing a purchase" using(
+                "Both buyer and seller should sign the transaction when completing a purchase" using (
                         command.signers.toSet() == inputState.participants.map { it.owningKey }.toSet())
             }
 
@@ -79,11 +77,12 @@ class PurchaseContract : Contract {
 // * State *
 // *********
 data class PurchaseState(
-        val buyer: Party,
-        val seller: Party,
-        val price: Amount<Currency>,
-        val amountPaid: Amount<Currency>,
-        val itemId: Int
-) : ContractState {
-    override val participants: List<AbstractParty> get() = listOf(buyer, seller)
+    val buyer: Party,
+    val seller: Party,
+    val price: Amount<Currency>,
+    val amountPaid: Amount<Currency>,
+    val itemId: Int,
+    override val linearId: UniqueIdentifier = UniqueIdentifier()
+) : LinearState {
+    override val participants: List<Party> get() = listOf(buyer, seller)
 }
