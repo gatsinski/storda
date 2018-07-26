@@ -46,7 +46,7 @@ class PurchaseInitiateFlow {
 
             val signedTransaction = serviceHub.signInitialTransaction(transactionBuilder)
 
-            val sessions = (outputState.participants - ourIdentity).map { initiateFlow(it as Party) }.toSet()
+            val sessions = (outputState.participants - ourIdentity).map { initiateFlow(it) }.toSet()
 
             val fullySignedTransaction = subFlow(CollectSignaturesFlow(signedTransaction, sessions))
 
