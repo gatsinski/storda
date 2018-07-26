@@ -1,45 +1,12 @@
 package com.storda.flows
 
 import com.storda.PurchaseState
-import net.corda.core.contracts.Amount
-import net.corda.core.identity.Party
 import net.corda.core.node.services.queryBy
-import net.corda.core.transactions.SignedTransaction
-import net.corda.core.utilities.getOrThrow
 import net.corda.finance.POUNDS
-import net.corda.testing.core.singleIdentity
-import net.corda.testing.node.MockNetwork
-import net.corda.testing.node.StartedMockNode
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
-import java.util.*
 import kotlin.test.assertEquals
 
-class PurchaseInitiateTests {
-    private lateinit var network: MockNetwork
-    private lateinit var buyerNode: StartedMockNode
-    private lateinit var sellerNode: StartedMockNode
-    private lateinit var buyer: Party
-    private lateinit var seller: Party
-
-    @Before
-    fun setup() {
-        network = MockNetwork(listOf("com.storda"), threadPerNode = true)
-        buyerNode = network.createNode()
-        sellerNode = network.createNode()
-        buyer = buyerNode.info.singleIdentity()
-        seller = sellerNode.info.singleIdentity()
-        listOf(buyerNode, sellerNode).forEach {
-            it.registerInitiatedFlow(PurchaseInitiateFlow.Responder::class.java)
-        }
-    }
-
-    @After
-    fun tearDown() {
-        network.stopNodes()
-    }
-
+class PurchaseInitiateTests : PurchaseTestsBase() {
 
     @Test
     fun `Purchase should be initiated successfully`() {
@@ -90,16 +57,5 @@ class PurchaseInitiateTests {
         val expectedSignatures = listOf(buyer, seller).map { it.owningKey }.toSet()
 
         assertEquals(expectedSignatures, transactionSignatures, "Both parties should sign")
-    }
-
-    private fun initiatePurchase(
-        buyer: StartedMockNode,
-        seller: StartedMockNode,
-        price: Amount<Currency>,
-        itemId: Int
-    ): SignedTransaction {
-        val sellerIdentity = seller.info.singleIdentity()
-        val flow = PurchaseInitiateFlow.Initiator(sellerIdentity, price, itemId)
-        return buyer.startFlow(flow).getOrThrow()
     }
 }
