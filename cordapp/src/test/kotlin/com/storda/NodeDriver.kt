@@ -23,10 +23,21 @@ fun main(args: Array<String>) {
     val user = User("user1", "test", permissions = setOf("ALL"))
     driver(DriverParameters(isDebug = true, waitForAllNodesToFinish = true)) {
         val (partyA, partyB) = listOf(
-                startNode(providedName = CordaX500Name("PartyA", "London", "GB"), rpcUsers = listOf(user)),
-                startNode(providedName = CordaX500Name("PartyB", "New York", "US"), rpcUsers = listOf(user))).map { it.getOrThrow() }
+            startNode(providedName = CordaX500Name("PartyA", "London", "GB"), rpcUsers = listOf(user)),
+            startNode(providedName = CordaX500Name("PartyB", "New York", "US"), rpcUsers = listOf(user))
+        ).map { it.getOrThrow() }
 
-        startWebserver(partyA)
-        startWebserver(partyB)
+
+
+        val (webServerAddressA, webServerAddressB) = listOf(
+            startWebserver(partyA),
+            startWebserver(partyB)
+        ).map {
+            it.getOrThrow().listenAddress
+        }
+
+        System.out.println("Party A address is http://$webServerAddressA")
+        System.out.println("Party B address is http://$webServerAddressB")
+
     }
 }
