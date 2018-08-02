@@ -17,11 +17,9 @@ jobs:
           - project-dependencies-{{ checksum "build.gradle" }}
           - project-dependencies-
 
-      - run: gradle dependencies
-
       - run:
           name: Install project dependencies
-          command: gradle dependencies
+          command: gradle testClasses
 
       - save_cache:
           paths:
